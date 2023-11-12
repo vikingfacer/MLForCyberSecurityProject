@@ -1,0 +1,10 @@
+tensorflow
+keras
+tldextract
+requests
+whois
+black
+scipy
+matplotlib
+numpy
+python-lsp-server
