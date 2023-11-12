@@ -2,9 +2,10 @@
 
 import matplotlib.pyplot as plot
 import pickle
+import os
 
 if __name__ == "__main__":
-    with open("data.pickle", "rb") as fin:
+    with open(os.sys.argv[1], "rb") as fin:
         data = pickle.load(fin)
     features = {
         "website_len": [],
