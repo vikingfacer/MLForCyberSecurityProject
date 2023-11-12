@@ -74,7 +74,7 @@ def getPickle(pickle_file):
 if __name__ == "__main__":
     data_dir = os.sys.argv[1]
 
-    pickle_file = "data.pickle"
+    pickle_file = "{}.pickle".format(data_dir.replace("/", ""))
     features = getPickle(pickle_file)
 
     for datafile in os.listdir(data_dir):
@@ -96,5 +96,5 @@ if __name__ == "__main__":
         }
 
     print(features)
-    with open("data.pickle", "wb") as dataOut:
+    with open(pickle_file, "wb") as dataOut:
         pickle.dump(features, dataOut)
