@@ -38,17 +38,6 @@ def NotCommentOrEmpty(line):
     return site[0] != "#" and len(site) > 0 and site[0] != "\n"
 
 
-def DictListToCSV(d, fn):
-    """
-    prints keys for header of CSV
-    then prints values of dictionary to rows in CSV
-    """
-    with open(fn, "w") as fout:
-        fout.write(",".join([d[iter(d)].keys()]) + "\n")
-        for website, v in d.items():
-            fout.write(website + "," + ",".join([v[key] for key in v]) + "\n")
-
-
 def ExtractFeatures(websiteDict, fn):
     """
     creates additional dictionary of {key + func name : func applied}
