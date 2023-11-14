@@ -1,4 +1,4 @@
-keras
+scikit-learn
 tldextract
 requests
 whois
