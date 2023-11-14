@@ -4,8 +4,10 @@ from tldextract import extract
 import pickle
 import measures
 
+import argparse
 import os
 import json
+import pathlib
 
 
 def extractAndAdd(website):
@@ -70,22 +72,36 @@ def getPickle(pickle_file):
     return features
 
 
-# next-step-file: filename.split(".")[0] + "Xstep0" + ".cvs", "w")
+
 if __name__ == "__main__":
-    data_dir = os.sys.argv[1]
+    parser = argparse.ArgumentParser(
+        prog="Feature Extraction",
+        description="extracts features from urls",
+    )
 
-    pickle_file = "{}.pickle".format(data_dir.replace("/", ""))
-    features = getPickle(pickle_file)
+    parser.add_argument("DataDirectory", type=pathlib.Path)
+    parser.add_argument(
+        "--infile", type=argparse.FileType("rb"), help="pickle file imported"
+    )
+    parser.add_argument(
+        "--out", type=argparse.FileType("wb"), help="pickel file output"
+    )
 
-    for datafile in os.listdir(data_dir):
+    args = parser.parse_args(os.sys.argv[1:])
+
+    cleanedRawData = []
+    for datafile in os.listdir(args.DataDirectory):
         print("********** {} ***********".format(datafile))
-        with open("{}/{}".format(data_dir, datafile), "r") as fin:
+        with open("{}/{}".format(args.DataDirectory, datafile), "r") as fin:
             for site in fin.readlines():
                 if NotCommentOrEmpty(site):
                     site = site.replace("\n", "")
-                    features[site] = extractAndAdd(site)
+                    cleanedRawData.append(extractAndAdd(site))
 
-    # feature extraction
+    extractedFeatures = {}
+    if parser.infile:
+        extractedFeatures = getPickle(parser.infile)
+
     for k in features:
         features[k] = {
             **features[k],
@@ -96,5 +112,6 @@ if __name__ == "__main__":
         }
 
     print(features)
-    with open(pickle_file, "wb") as dataOut:
-        pickle.dump(features, dataOut)
+    if args.output:
+        with open(args.output, "wb") as dataOut:
+            pickle.dump(extractedFeatures, dataOut)
