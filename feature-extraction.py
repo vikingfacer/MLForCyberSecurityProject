@@ -51,6 +51,10 @@ def ExtractFeatures(websiteDict, fn):
     return extracted_features
 
 
+def apply(datalist, part, fn):
+    return {"{}_{}".format(part, fn): [fn(d[part]) for d in datalist]}
+
+
 def getPickle(pickle_file):
     features = None
     if os.path.isfile(pickle_file):
@@ -92,15 +96,12 @@ if __name__ == "__main__":
         extractedFeatures = getPickle(parser.infile)
 
     for k in features:
-        features[k] = {
-            **features[k],
-            **ExtractFeatures(
-                features[k],
-                [len, measures.entropy, measures.metric_entropy, measures.CCR],
-            ),
-        }
+        for fn in features[k]:
+            extractedFeatures["{}_{}".format(k, fn.__name__)] = [
+                fn(x[k]) for x in cleanedRawData
+            ]
 
-    print(features)
+    print(extractedFeatures)
     if args.output:
         with open(args.output, "wb") as dataOut:
             pickle.dump(extractedFeatures, dataOut)
