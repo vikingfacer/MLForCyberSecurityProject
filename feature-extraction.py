@@ -65,6 +65,18 @@ def getPickle(pickle_file):
     return features
 
 
+"""
+    features: extracted from raw data
+    key: data field
+    value: list of measures
+    key+measure = feature
+"""
+features = {
+    "website": [len, measures.entropy, measures.metric_entropy, measures.CCR],
+    "subdomain": [len, measures.entropy, measures.metric_entropy, measures.CCR],
+    "domain": [len, measures.entropy, measures.metric_entropy, measures.CCR],
+    "tld": [len, measures.entropy],
+}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
