@@ -78,20 +78,21 @@ features = {
     "tld": [len, measures.entropy],
 }
 
+
+parser = argparse.ArgumentParser(
+    prog="Feature Extraction",
+    description="extracts features from urls",
+)
+
+parser.add_argument(
+    "DataDirectory",
+    type=pathlib.Path,
+)
+parser.add_argument("-i", type=pathlib.Path, help="pickle file imported")
+parser.add_argument("-o", type=pathlib.Path, help="pickle file output")
+parser.add_argument("-c", type=int, help="class label to apply on pickle file")
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        prog="Feature Extraction",
-        description="extracts features from urls",
-    )
-
-    parser.add_argument("DataDirectory", type=pathlib.Path)
-    parser.add_argument(
-        "--infile", type=argparse.FileType("rb"), help="pickle file imported"
-    )
-    parser.add_argument(
-        "--out", type=argparse.FileType("wb"), help="pickel file output"
-    )
-
     args = parser.parse_args(os.sys.argv[1:])
 
     cleanedRawData = []
@@ -104,16 +105,16 @@ if __name__ == "__main__":
                     cleanedRawData.append(extractAndAdd(site))
 
     extractedFeatures = {}
-    if parser.infile:
-        extractedFeatures = getPickle(parser.infile)
+    if args.i:
+        extractedFeatures = getPickle(args.i)
 
     for k in features:
         for fn in features[k]:
             extractedFeatures["{}_{}".format(k, fn.__name__)] = [
                 fn(x[k]) for x in cleanedRawData
             ]
-
-    print(extractedFeatures)
-    if args.output:
-        with open(args.output, "wb") as dataOut:
+    # add the class label
+    extractedFeatures["class"] = [args.c] * len(list(extractedFeatures.values())[0])
+    if args.o:
+        with open(args.o, "wb") as dataOut:
             pickle.dump(extractedFeatures, dataOut)
