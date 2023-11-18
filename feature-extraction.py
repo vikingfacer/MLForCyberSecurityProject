@@ -115,7 +115,12 @@ if __name__ == "__main__":
                 fn(x[k]) for x in cleanedRawData
             ]
     # add the class label
-    extractedFeatures["class"] = [args.c] * len(list(extractedFeatures.values())[0])
+    extractedFeatures["classification"] = [args.c] * len(
+        list(extractedFeatures.values())[0]
+    )
+
+    # put into a pandas dataframe
+
     if args.o:
         with open(args.o, "wb") as dataOut:
             pickle.dump(pandas.DataFrame(extractedFeatures), dataOut)
