@@ -8,6 +8,7 @@ import argparse
 import os
 import json
 import pathlib
+import pandas
 
 
 def extractAndAdd(website):
@@ -59,7 +60,7 @@ def getPickle(pickle_file):
     features = None
     if os.path.isfile(pickle_file):
         with open(pickle_file, "rb") as pickled_obj:
-            features = pickle.load(pickled_obj)
+            features = pickle.load(pickled_obj).to_dict()
     else:
         features = {}
     return features
@@ -81,7 +82,7 @@ features = {
 
 parser = argparse.ArgumentParser(
     prog="Feature Extraction",
-    description="extracts features from urls",
+    description="extracts features from urls and output pandas dataframe",
 )
 
 parser.add_argument(
@@ -117,4 +118,4 @@ if __name__ == "__main__":
     extractedFeatures["class"] = [args.c] * len(list(extractedFeatures.values())[0])
     if args.o:
         with open(args.o, "wb") as dataOut:
-            pickle.dump(extractedFeatures, dataOut)
+            pickle.dump(pandas.DataFrame(extractedFeatures), dataOut)
