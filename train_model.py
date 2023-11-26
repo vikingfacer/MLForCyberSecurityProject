@@ -25,12 +25,10 @@ target size will be used to sample benign set
 def makeDataSet(benign, target):
     # benign class is a giant set
     # there for only a portion equal to the size of target is selected
-    benign_sample = benign_class.sample(
-        n=int(target_class.size / len(target_class.columns))
-    )
+    benign_sample = benign.sample(n=int(target.size / len(target.columns)))
 
     # combine the two sets
-    model_data = pandas.concat([target_class, benign_sample])
+    model_data = pandas.concat([target, benign_sample])
 
     # Step to move classification to Y from X
     Y = model_data.classification
