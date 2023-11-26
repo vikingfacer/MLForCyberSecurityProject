@@ -12,6 +12,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_validate
 from sklearn.ensemble import RandomForestClassifier
 
+import matplotlib.pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import classification_report
 
 """
 benign set is 1 Million rows compared to target set is 154,000
@@ -34,6 +37,27 @@ def makeDataSet(benign, target):
     X = model_data.drop("classification", axis=1)
 
     return X, Y
+
+
+def plotFeatImportance(randomForest, labels, ax):
+    """
+    plots the importances of features determined by the Random Forest
+    randomForest: randomforest w/ feature importance
+    labels: labels of features
+    ax: plot to graph feature importance on
+    """
+    std = np.std(
+        [tree.feature_importances_ for tree in randomForest.estimators_], axis=0
+    )
+    importance = pandas.Series(std, labels)
+    ax.set_title("Random Forest Feature importances using MDI")
+    importance.plot.bar(yerr=std, ax=ax)
+
+
+def plotConfusionMatrix(randomForest, testX, testY, classlabels):
+    ConfusionMatrixDisplay.from_estimator(
+        randomForest, testX, testY, display_labels=classlabels
+    )
 
 
 if "__main__" == __name__:
