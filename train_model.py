@@ -85,16 +85,31 @@ if "__main__" == __name__:
     X, Y = makeDataSet(benign_class, target_class)
 
     train_x, test_x, train_y, test_y = train_test_split(X, Y, test_size=0.3)
-
-    rfc = RandomForestClassifier(10)
+    rfc = RandomForestClassifier(n)
     print("training {}".format(type(rfc)))
     rfc.fit(train_x, train_y)
     print("testing {}".format(type(rfc)))
     scores = rfc.score(test_x, test_y)
-    print("score of {}".format(type(rfc)))
+    print("score of n={}".format(n))
     print(scores)
+
+    predictions = rfc.predict(test_x)
+    print(classification_report(test_y, predictions, target_names=["benign", "ads"]))
 
     if args.modelname:
         print("Saving Model: as {}".format(args.modelname))
         with open(args.modelname, "wb") as fout:
             pickle.dump(rfc, fout)
+
+        pngfn = "{}-{}.png"
+        classlabels = ["ads", "benign"]
+        plotConfusionMatrix(rfc, test_x, test_y, classlabels)
+        plt.savefig(pngfn.format(args.modelname, "ConfusionMatrix"))
+        plt.clf()
+
+        labels = [x for x in train_x.columns]
+        fig, ax = plt.subplots()
+        plotFeatImportance(rfc, labels, ax)
+        fig.tight_layout()
+        plt.savefig(pngfn.format(args.modelname, "FeatImport"))
+        plt.clf()
