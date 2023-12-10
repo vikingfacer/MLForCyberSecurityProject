@@ -76,8 +76,6 @@ def extractDatFromFile(file):
 features = {
     "website": [len, measures.entropy, measures.metric_entropy, measures.CCR],
     "subdomain": [len, measures.entropy, measures.metric_entropy, measures.CCR],
-    "domain": [len, measures.entropy, measures.metric_entropy, measures.CCR],
-    "tld": [len, measures.entropy],
 }
 
 
@@ -105,7 +103,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o", "--output", type=pathlib.Path, default=None, help="pickle file output"
     )
-    parser.add_argument("-c", type=int, help="class label to apply on pickle file")
+    parser.add_argument(
+        "-c", type=int, help="class label to apply on pickle file", default=None
+    )
     parser.add_argument("-d", action="store_true", help="Directory input flag")
     parser.add_argument("-f", action="store_true", help="File input flag")
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     applyMeasurements(features, cleanedRawData, extractedFeatures)
 
     # add label for training classification
-    if args.c:
+    if args.c != None:
         # add the class label
         extractedFeatures["classification"] = [args.c] * len(
             list(extractedFeatures.values())[0]
