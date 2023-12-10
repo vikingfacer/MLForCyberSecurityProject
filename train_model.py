@@ -10,8 +10,12 @@ import pandas
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_validate
-from sklearn.ensemble import RandomForestClassifier
 
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.metrics import classification_report
@@ -82,32 +86,32 @@ if "__main__" == __name__:
 
     X, Y = makeDataSet(benign_class, target_class)
 
-    train_x, test_x, train_y, test_y = train_test_split(X, Y, test_size=0.3)
-    rfc = RandomForestClassifier(n)
-    print("training {}".format(type(rfc)))
-    rfc.fit(train_x, train_y)
-    print("testing {}".format(type(rfc)))
-    scores = rfc.score(test_x, test_y)
-    print("score of n={}".format(n))
-    print(scores)
+    classifier = {
+        "randomforest": RandomForestClassifier(10),
+        "decsiontree": DecisionTreeClassifier(max_depth=5, random_state=42),
+        "knearestnieghbor": KNeighborsClassifier(3),
+        "AdaBoost": AdaBoostClassifier(random_state=42),
+        "NeuralNet": MLPClassifier(alpha=1, max_iter=1000, random_state=42),
+    }
+    for split in [0.3, 0.4, 0.5, 0.6, 0.7]:
+        print("Test split {}".format(split))
+        train_x, test_x, train_y, test_y = train_test_split(X, Y, test_size=split)
+        for name, c in classifier.items():
+            print("training {}".format(name))
+            c.fit(train_x, train_y)
+            print("testing {}".format(name))
+            scores = c.score(test_x, test_y)
+            print(scores)
 
-    predictions = rfc.predict(test_x)
-    print(classification_report(test_y, predictions, target_names=["benign", "ads"]))
+            predictions = c.predict(test_x)
+            print(
+                classification_report(
+                    test_y, predictions, target_names=["benign", "ads"]
+                )
+            )
 
-    if args.modelname:
-        print("Saving Model: as {}".format(args.modelname))
-        with open(args.modelname, "wb") as fout:
-            pickle.dump(rfc, fout)
-
-        pngfn = "{}-{}.png"
-        classlabels = ["ads", "benign"]
-        plotConfusionMatrix(rfc, test_x, test_y, classlabels)
-        plt.savefig(pngfn.format(args.modelname, "ConfusionMatrix"))
-        plt.clf()
-
-        labels = [x for x in train_x.columns]
-        fig, ax = plt.subplots()
-        plotFeatImportance(rfc, labels, ax)
-        fig.tight_layout()
-        plt.savefig(pngfn.format(args.modelname, "FeatImport"))
-        plt.clf()
+            pngfn = "{}0-split-{}-{}.png"
+            classlabels = ["ads", "benign"]
+            plotConfusionMatrix(c, test_x, test_y, classlabels)
+            plt.savefig(pngfn.format(int(split), name, "ConfusionMatrix"))
+            plt.clf()
