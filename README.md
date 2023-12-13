@@ -7,11 +7,11 @@ was a random forest using lexical analysis on the domain fields of the URL.
 ## Scripts
 There are three main scripts in the repo.
 - train model: takes a pickle of benign and target data and trains/test the model the model can be saved as a pickle.
-  -- currently train model trains a bunch of models and just scores them
+     - currently train model trains a bunch of models and just scores them
 - extract features: consumes the raw data (URLS) as files with -f or directories with -d or just an argument as a positional arg
-  -- outputs a pickle for the training model script to consume
+     - outputs a pickle for the training model script to consume
 - plot features: takes benign and target dataset pickles and plots the features as histograms
-  -- plot features outputs a lot of images and -o specifies a directory to put them in
+     - plot features outputs a lot of images and -o specifies a directory to put them in
 
 ### train_model.py
 usage: Train Model [-h] [-b BENIGN] [-t TARGET] [-m MODELNAME]
